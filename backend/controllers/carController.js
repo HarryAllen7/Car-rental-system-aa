@@ -2,10 +2,15 @@ const Car = require("../models/Car");
 
 const getCars = async (req, res) => {
   try {
-    const { brand, maxPrice } = req.query;
+    const { brand, maxPrice, fuelType, seats, location } = req.query;
     let filter = {};
+
     if (brand) filter.brand = { $regex: brand, $options: "i" };
     if (maxPrice) filter.pricePerDay = { $lte: Number(maxPrice) };
+    if (fuelType) filter.fuelType = fuelType;
+    if (seats) filter.seats = Number(seats);
+    if (location) filter.location = { $regex: location, $options: "i" };
+
     const cars = await Car.find(filter).sort({ createdAt: -1 });
     res.json(cars);
   } catch (error) {
@@ -25,10 +30,10 @@ const getCarById = async (req, res) => {
 
 const addCar = async (req, res) => {
   try {
-    const { carName, brand, model, pricePerDay, image, seats, fuelType } = req.body;
-    if (!carName || !brand || !model || !pricePerDay)
+    const { carName, brand, model, pricePerDay, image, seats, fuelType, location } = req.body;
+    if (!carName || !brand || !model || !pricePerDay || !location)
       return res.status(400).json({ message: "Please fill all required fields" });
-    const car = await Car.create({ carName, brand, model, pricePerDay, image, seats, fuelType });
+    const car = await Car.create({ carName, brand, model, pricePerDay, image, seats, fuelType, location });
     res.status(201).json(car);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong", error: error.message });
@@ -46,6 +51,7 @@ const updateCar = async (req, res) => {
     car.image = req.body.image || car.image;
     car.seats = req.body.seats || car.seats;
     car.fuelType = req.body.fuelType || car.fuelType;
+    car.location = req.body.location || car.location;
     car.status = req.body.status || car.status;
     const updatedCar = await car.save();
     res.json(updatedCar);

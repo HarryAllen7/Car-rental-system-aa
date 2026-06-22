@@ -9,6 +9,7 @@ const carSchema = new mongoose.Schema(
     image: { type: String, default: "" },
     seats: { type: Number, default: 5 },
     fuelType: { type: String, default: "Petrol" },
+    location: { type: String, required: true },
     status: {
       type: String,
       enum: ["available", "booked", "maintenance"],

@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Car = require("../models/Car");
-const Booking = require("../models/Booking");
+const Booking = require("../models/Bookings");
 
 const getDashboardStats = async (req, res) => {
   try {

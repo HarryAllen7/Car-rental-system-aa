@@ -1,3 +1,6 @@
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]); // Forces Node to bypass the Windows cloud connection bug
+
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
