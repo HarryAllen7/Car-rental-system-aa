@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Cars from "./pages/Cars";
 import CarDetails from "./pages/CarDetails";
-import MyBookings from "./pages/MyBookings";
+import MyBookings from "./pages/myBookings";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/admin/Dashboard";
 import ManageCars from "./pages/admin/ManageCars";

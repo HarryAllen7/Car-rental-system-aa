@@ -9,6 +9,7 @@ const emptyForm = {
   image: "",
   seats: 5,
   fuelType: "Petrol",
+  location: "",
   status: "available",
 };
 
@@ -61,6 +62,7 @@ function ManageCars() {
       image: car.image,
       seats: car.seats,
       fuelType: car.fuelType,
+      location: car.location || "",
       status: car.status,
     });
     setEditingId(car._id);
@@ -193,6 +195,16 @@ function ManageCars() {
             </div>
 
             <div className="form-group">
+              <label>Hub Location</label>
+              <select name="location" value={formData.location} onChange={handleChange} required>
+                <option value="">Select Hub Location</option>
+                <option value="Kochi Airport">Kochi Airport</option>
+                <option value="Infopark">Infopark</option>
+                <option value="Downtown Hub">Downtown Hub</option>
+              </select>
+            </div>
+
+            <div className="form-group">
               <label>Status</label>
               <select name="status" value={formData.status} onChange={handleChange}>
                 <option value="available">Available</option>
@@ -220,6 +232,7 @@ function ManageCars() {
               <th>Car Name</th>
               <th>Brand</th>
               <th>Price/Day</th>
+              <th>Location</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -230,6 +243,7 @@ function ManageCars() {
                 <td>{car.carName}</td>
                 <td>{car.brand}</td>
                 <td>₹{car.pricePerDay}</td>
+                <td>{car.location || "N/A"}</td>
                 <td><span className={`badge badge-${car.status}`}>{car.status}</span></td>
                 <td className="action-icons">
                   <button className="btn btn-small" onClick={() => handleEdit(car)}>
