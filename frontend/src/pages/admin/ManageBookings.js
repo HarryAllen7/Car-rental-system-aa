@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api from "../../services/api";
 
-function MyBookings() {
+function ManageBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -9,7 +9,7 @@ function MyBookings() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/bookings/my");
+      const res = await api.get("/bookings");
       setBookings(res.data);
     } catch (err) {
       console.log(err);
@@ -22,53 +22,70 @@ function MyBookings() {
     fetchBookings();
   }, []);
 
-  const handleCancel = async (bookingId) => {
-    if (!window.confirm("Are you sure you want to cancel this booking?")) return;
-
+  const handleApprove = async (id) => {
     try {
-      await api.put(`/bookings/${bookingId}/cancel`);
-      setMessage("Booking cancelled successfully");
+      await api.put(`/bookings/${id}/approve`);
+      setMessage("Booking approved");
+      fetchBookings();
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Could not approve booking");
+    }
+  };
+
+  const handleCancel = async (id) => {
+    if (!window.confirm("Cancel this booking?")) return;
+    try {
+      await api.put(`/bookings/${id}/cancel`);
+      setMessage("Booking cancelled");
       fetchBookings();
     } catch (err) {
       setMessage(err.response?.data?.message || "Could not cancel booking");
     }
   };
 
-  const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString();
-  };
+  const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString();
 
   return (
     <div className="container">
-      <h2 className="page-title">My Bookings</h2>
+      <h2 className="page-title">Manage Bookings</h2>
 
       {message && <div className="success-text">{message}</div>}
 
       {loading ? (
-        <p className="loading-text">Loading...</p>
+        <p className="loading-text">Loading bookings...</p>
       ) : bookings.length === 0 ? (
-        <p className="empty-msg">You have not booked any cars yet</p>
+        <p className="empty-msg">No bookings yet</p>
       ) : (
         <table>
           <thead>
             <tr>
+              <th>User</th>
               <th>Car</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Total Amount</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Amount</th>
               <th>Status</th>
-              <th>Action</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {bookings.map((b) => (
               <tr key={b._id}>
-                <td>{b.carId ? `${b.carId.carName} (${b.carId.brand})` : "Car removed"}</td>
+                <td>{b.userId ? `${b.userId.name} (${b.userId.email})` : "User removed"}</td>
+                <td>{b.carId ? `${b.carId.carName}` : "Car removed"}</td>
                 <td>{formatDate(b.startDate)}</td>
                 <td>{formatDate(b.endDate)}</td>
                 <td>₹{b.totalAmount}</td>
                 <td><span className={`badge badge-${b.status}`}>{b.status}</span></td>
-                <td>
+                <td className="action-icons">
+                  {b.status === "pending" && (
+                    <button
+                      className="btn btn-green btn-small"
+                      onClick={() => handleApprove(b._id)}
+                    >
+                      Approve
+                    </button>
+                  )}
                   {(b.status === "pending" || b.status === "confirmed") && (
                     <button
                       className="btn btn-red btn-small"
@@ -87,4 +104,4 @@ function MyBookings() {
   );
 }
 
-export default MyBookings;
+export default ManageBookings;

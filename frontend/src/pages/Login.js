@@ -1,32 +1,50 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
     try {
-      const res = await api.post('/auth/login', form);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      navigate('/');
+      const res = await api.post("/auth/login", formData);
+      login(res.data);
+      if (res.data.role === "admin") navigate("/admin/dashboard");
+      else navigate("/cars");
     } catch (err) {
-      alert(err.response?.data?.message || 'Error');
+      setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="form-box">
       <h2>Login</h2>
-      <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
-      <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
-      <button type="submit">Login</button>
-    </form>
+      {error && <div className="error-text">{error}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Email</label>
+          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+        </div>
+        <div className="form-group">
+          <label>Password</label>
+          <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+        </div>
+        <button type="submit" className="btn" disabled={loading}>{loading ? "Please wait..." : "Login"}</button>
+      </form>
+      <p className="form-footer">Don't have an account? <Link to="/register">Register here</Link></p>
+    </div>
   );
 }
 

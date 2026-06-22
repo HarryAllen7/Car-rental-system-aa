@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { getCars, getCarById, createCar, updateCar, deleteCar } = require('../controllers/carController');
-const { protect, adminOnly } = require('../middleware/authMiddleware');
+const { getCars, getCarById, addCar, updateCar, deleteCar } = require("../controllers/carController");
+const { protect, isAdmin } = require("../middleware/authMiddleware");
 
-router.get('/', getCars);
-router.get('/:id', getCarById);
-router.post('/', protect, adminOnly, createCar);
-router.put('/:id', protect, adminOnly, updateCar);
-router.delete('/:id', protect, adminOnly, deleteCar);
+router.get("/", getCars);
+router.get("/:id", getCarById);
+router.post("/", protect, isAdmin, addCar);
+router.put("/:id", protect, isAdmin, updateCar);
+router.delete("/:id", protect, isAdmin, deleteCar);
 
 module.exports = router;

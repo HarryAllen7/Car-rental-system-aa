@@ -1,38 +1,397 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background-color: #2c3e50;
+  color: white;
+  padding: 15px 0;
+}
+
+.navbar .container {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.navbar .logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.navbar a {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.navbar a:hover {
+  color: #f39c12;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.navbar button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.navbar button:hover {
+  background-color: #c0392b;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn:hover {
+  background-color: #1a252f;
+}
+
+.btn-orange {
+  background-color: #f39c12;
+}
+
+.btn-orange:hover {
+  background-color: #d68910;
+}
+
+.btn-red {
+  background-color: #e74c3c;
+}
+
+.btn-red:hover {
+  background-color: #c0392b;
+}
+
+.btn-green {
+  background-color: #27ae60;
+}
+
+.btn-green:hover {
+  background-color: #1e8449;
+}
+
+.btn-small {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* ---------- Forms ---------- */
+.form-box {
+  max-width: 400px;
+  margin: 40px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-box h2 {
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-box .btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.error-text {
+  color: #e74c3c;
+  background: #fdecea;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.success-text {
+  color: #27ae60;
+  background: #eafaf1;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  background-color: #34495e;
+  color: white;
+  padding: 50px 0;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 16px;
+  color: #d5d8dc;
+}
+
+/* ---------- Filters ---------- */
+.filters {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+.filters input,
+.filters select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* ---------- Car Grid ---------- */
+.car-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.car-card {
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.car-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background-color: #ddd;
+}
+
+.car-card-body {
+  padding: 14px;
+}
+
+.car-card h3 {
+  margin-bottom: 4px;
+}
+
+.car-card .brand {
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.car-card .price {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.badge-available {
+  background-color: #eafaf1;
+  color: #27ae60;
+}
+
+.badge-booked {
+  background-color: #fdecea;
+  color: #e74c3c;
+}
+
+.badge-pending {
+  background-color: #fef5e7;
+  color: #f39c12;
+}
+
+.badge-confirmed {
+  background-color: #eafaf1;
+  color: #27ae60;
+}
+
+.badge-cancelled {
+  background-color: #fdecea;
+  color: #e74c3c;
+}
+
+.badge-completed {
+  background-color: #eaf2f8;
+  color: #2980b9;
+}
+
+/* ---------- Tables ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-top: 15px;
+}
+
+table th,
+table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+table th {
+  background-color: #ecf0f1;
+}
+
+/* ---------- Dashboard cards ---------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.stat-card h2 {
+  font-size: 28px;
+  color: #2c3e50;
+}
+
+.stat-card p {
+  color: #777;
+  margin-top: 5px;
+}
+
+/* ---------- Misc ---------- */
+.page-title {
+  margin-bottom: 10px;
+}
+
+.empty-msg {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.section-title {
+  margin: 25px 0 10px 0;
+}
+
+.car-detail-box {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.car-detail-box img {
+  width: 320px;
+  max-width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 6px;
+  background-color: #ddd;
+}
+
+.car-detail-info {
+  flex: 1;
+  min-width: 250px;
+}
+
+.car-detail-info h2 {
+  margin-bottom: 6px;
+}
+
+.car-detail-info .price {
+  font-size: 20px;
+  margin: 10px 0;
+}
+
+.action-icons button {
+  margin-right: 6px;
+}
+
+.loading-text {
+  text-align: center;
+  padding: 40px;
+  color: #888;
 }

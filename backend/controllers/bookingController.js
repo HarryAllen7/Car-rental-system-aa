@@ -1,74 +1,94 @@
-const Booking = require('../models/Booking');
-const Car = require('../models/Car');
+const Booking = require("../models/Booking");
+const Car = require("../models/Car");
 
-exports.createBooking = async (req, res) => {
+const createBooking = async (req, res) => {
   try {
     const { carId, startDate, endDate } = req.body;
+    if (!carId || !startDate || !endDate)
+      return res.status(400).json({ message: "Please provide car and dates" });
 
     const car = await Car.findById(carId);
-    if (!car) return res.status(404).json({ message: 'Car not found' });
+    if (!car) return res.status(404).json({ message: "Car not found" });
+    if (car.status !== "available")
+      return res.status(400).json({ message: "This car is not available right now" });
 
-    const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
-    if (days <= 0) return res.status(400).json({ message: 'Invalid dates' });
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (end <= start)
+      return res.status(400).json({ message: "End date must be after start date" });
 
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
     const totalAmount = days * car.pricePerDay;
 
     const booking = await Booking.create({
       userId: req.user.id,
       carId,
-      startDate,
-      endDate,
+      startDate: start,
+      endDate: end,
       totalAmount,
-      status: 'pending'
+      status: "pending",
     });
 
+    car.status = "booked";
+    await car.save();
     res.status(201).json(booking);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 };
 
-// User's own bookings
-exports.getMyBookings = async (req, res) => {
+const getMyBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({ userId: req.user.id }).populate('carId');
+    const bookings = await Booking.find({ userId: req.user.id })
+      .populate("carId", "carName brand model image pricePerDay")
+      .sort({ createdAt: -1 });
     res.json(bookings);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 };
 
-// Admin: all bookings
-exports.getAllBookings = async (req, res) => {
+const cancelBooking = async (req, res) => {
   try {
-    const bookings = await Booking.find().populate('carId').populate('userId', 'name email');
-    res.json(bookings);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
+    if (booking.userId.toString() !== req.user.id && req.user.role !== "admin")
+      return res.status(403).json({ message: "Not authorized to cancel this booking" });
 
-exports.updateBookingStatus = async (req, res) => {
-  try {
-    const { status } = req.body; // 'confirmed' or 'cancelled'
-    const booking = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true });
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
-    res.json(booking);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// User cancels their own booking
-exports.cancelMyBooking = async (req, res) => {
-  try {
-    const booking = await Booking.findOne({ _id: req.params.id, userId: req.user.id });
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
-
-    booking.status = 'cancelled';
+    booking.status = "cancelled";
     await booking.save();
-    res.json(booking);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+
+    const car = await Car.findById(booking.carId);
+    if (car) { car.status = "available"; await car.save(); }
+
+    res.json({ message: "Booking cancelled", booking });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 };
+
+const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate("userId", "name email")
+      .populate("carId", "carName brand model")
+      .sort({ createdAt: -1 });
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
+  }
+};
+
+const approveBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
+    booking.status = "confirmed";
+    await booking.save();
+    res.json({ message: "Booking approved", booking });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
+  }
+};
+
+module.exports = { createBooking, getMyBookings, cancelBooking, getAllBookings, approveBooking };

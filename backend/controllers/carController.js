@@ -1,55 +1,68 @@
-const Car = require('../models/Car');
+const Car = require("../models/Car");
 
-// GET /api/cars  -> supports ?brand=Toyota&maxPrice=3000
-exports.getCars = async (req, res) => {
+const getCars = async (req, res) => {
   try {
     const { brand, maxPrice } = req.query;
     let filter = {};
-    if (brand) filter.brand = { $regex: brand, $options: 'i' };
+    if (brand) filter.brand = { $regex: brand, $options: "i" };
     if (maxPrice) filter.pricePerDay = { $lte: Number(maxPrice) };
-
-    const cars = await Car.find(filter);
+    const cars = await Car.find(filter).sort({ createdAt: -1 });
     res.json(cars);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 };
 
-exports.getCarById = async (req, res) => {
+const getCarById = async (req, res) => {
   try {
     const car = await Car.findById(req.params.id);
-    if (!car) return res.status(404).json({ message: 'Car not found' });
+    if (!car) return res.status(404).json({ message: "Car not found" });
     res.json(car);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 };
 
-exports.createCar = async (req, res) => {
+const addCar = async (req, res) => {
   try {
-    const car = await Car.create(req.body);
+    const { carName, brand, model, pricePerDay, image, seats, fuelType } = req.body;
+    if (!carName || !brand || !model || !pricePerDay)
+      return res.status(400).json({ message: "Please fill all required fields" });
+    const car = await Car.create({ carName, brand, model, pricePerDay, image, seats, fuelType });
     res.status(201).json(car);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 };
 
-exports.updateCar = async (req, res) => {
+const updateCar = async (req, res) => {
   try {
-    const car = await Car.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!car) return res.status(404).json({ message: 'Car not found' });
-    res.json(car);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const car = await Car.findById(req.params.id);
+    if (!car) return res.status(404).json({ message: "Car not found" });
+    car.carName = req.body.carName || car.carName;
+    car.brand = req.body.brand || car.brand;
+    car.model = req.body.model || car.model;
+    car.pricePerDay = req.body.pricePerDay || car.pricePerDay;
+    car.image = req.body.image || car.image;
+    car.seats = req.body.seats || car.seats;
+    car.fuelType = req.body.fuelType || car.fuelType;
+    car.status = req.body.status || car.status;
+    const updatedCar = await car.save();
+    res.json(updatedCar);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 };
 
-exports.deleteCar = async (req, res) => {
+const deleteCar = async (req, res) => {
   try {
-    const car = await Car.findByIdAndDelete(req.params.id);
-    if (!car) return res.status(404).json({ message: 'Car not found' });
-    res.json({ message: 'Car deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const car = await Car.findById(req.params.id);
+    if (!car) return res.status(404).json({ message: "Car not found" });
+    await car.deleteOne();
+    res.json({ message: "Car removed successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 };
+
+module.exports = { getCars, getCarById, addCar, updateCar, deleteCar };
