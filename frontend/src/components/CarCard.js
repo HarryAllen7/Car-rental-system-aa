@@ -7,6 +7,9 @@ function CarCard({ car }) {
       <div className="car-card-body">
         <h3>{car.carName}</h3>
         <p className="brand">{car.brand} • {car.model}</p>
+        <p className="location" style={{ fontSize: "0.85rem", color: "#7f8c8d", marginBottom: "8px", display: "flex", alignItems: "center", gap: "4px" }}>
+          📍 {car.location || "Main Hub"}
+        </p>
         <p className="price">₹{car.pricePerDay} / day</p>
         <span className={`badge badge-${car.status}`}>{car.status}</span>
         <br /><br />

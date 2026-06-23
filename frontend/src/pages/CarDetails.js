@@ -30,10 +30,8 @@ function CarDetails() {
 
   useEffect(() => {
     fetchCar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // calculate estimated total based on selected dates
   const getEstimatedTotal = () => {
     if (!startDate || !endDate || !car) return 0;
     const start = new Date(startDate);
@@ -66,7 +64,7 @@ function CarDetails() {
     try {
       await api.post("/bookings", { carId: id, startDate, endDate });
       setSuccess("Car booked successfully! Check 'My Bookings' for status.");
-      fetchCar(); // refresh car status
+      fetchCar();
     } catch (err) {
       setError(err.response?.data?.message || "Booking failed, try again");
     } finally {
@@ -90,6 +88,9 @@ function CarDetails() {
           <p className="brand">{car.brand} • {car.model}</p>
           <p className="price">₹{car.pricePerDay} / day</p>
           <p>Seats: {car.seats} | Fuel: {car.fuelType}</p>
+          <p className="location" style={{ fontSize: "0.95rem", color: "#2c3e50", marginTop: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
+            📍 Pick-up Hub: <b>{car.location || "Main Hub"}</b>
+          </p>
           <br />
           <span className={`badge badge-${car.status}`}>{car.status}</span>
 
